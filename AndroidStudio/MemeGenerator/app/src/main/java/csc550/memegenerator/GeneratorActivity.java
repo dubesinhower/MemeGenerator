@@ -8,12 +8,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
+public class GeneratorActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_generator);
 
         Toolbar appBar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(appBar);
@@ -23,12 +23,12 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
         shouldDisplayHomeUp();
 
         // http://developer.android.com/training/basics/fragments/fragment-ui.html
-        if(findViewById(R.id.fragment_container) != null) {
-            if(savedInstanceState != null) {
+        if (findViewById(R.id.fragment_container) != null) {
+            if (savedInstanceState != null) {
                 return;
             }
 
-            PopularMemesFragment fragment = new PopularMemesFragment();
+            PopularGeneratorsFragment fragment = new PopularGeneratorsFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
         }
     }
@@ -49,13 +49,11 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_home) {
-            Intent intent = new Intent(this, MainActivity.class);
             finish();
-            startActivity(intent);
         }
         if (id == R.id.action_generate) {
-            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            Intent intent = new Intent(this, GeneratorActivity.class);
+            Intent intent = getIntent();
+            finish();
             startActivity(intent);
         }
 
