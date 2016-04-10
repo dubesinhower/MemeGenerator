@@ -10,15 +10,15 @@ import java.util.Map;
 /**
  * Created by Christopher on 4/3/2016.
  */
-public class RetrieveJsonDataFromUrlTask extends AsyncTask<String, Void, Map<String, Object>> {
+public class GetJsonDataFromUrl extends AsyncTask<String, Void, Map<String, Object>> {
 
     public interface AsyncResponse {
-        void processFinish(Map<String, Object> output);
+        void onJsonDataLoaded(Map<String, Object> output);
     }
 
     public AsyncResponse delegate = null;
 
-    public RetrieveJsonDataFromUrlTask(AsyncResponse delegate) {
+    public GetJsonDataFromUrl(AsyncResponse delegate) {
         this.delegate = delegate;
     }
 
@@ -29,7 +29,8 @@ public class RetrieveJsonDataFromUrlTask extends AsyncTask<String, Void, Map<Str
         try{
             URL url = new URL(params[0]);
             ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(url, Map.class);
+            Map<String, Object> map = mapper.readValue(url, Map.class);
+            return map;
         }
         catch (Exception e) {
             this.exception = e;
@@ -38,6 +39,6 @@ public class RetrieveJsonDataFromUrlTask extends AsyncTask<String, Void, Map<Str
     }
 
     protected void onPostExecute(Map<String, Object> result) {
-        delegate.processFinish(result);
+        delegate.onJsonDataLoaded(result);
     }
 }

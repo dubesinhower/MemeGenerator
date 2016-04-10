@@ -49,12 +49,10 @@ public class GeneratorActivity extends AppCompatActivity implements FragmentMana
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_home) {
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            finish();
         }
         if (id == R.id.action_generate) {
             Intent intent = getIntent();
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             finish();
             startActivity(intent);
         }
@@ -71,5 +69,12 @@ public class GeneratorActivity extends AppCompatActivity implements FragmentMana
         //Enable Up button only  if there are entries in the back stack
         boolean canback = getSupportFragmentManager().getBackStackEntryCount()>0;
         getSupportActionBar().setDisplayHomeAsUpEnabled(canback);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        //This method is called when the up button is pressed. Just the pop back stack.
+        getSupportFragmentManager().popBackStack();
+        return true;
     }
 }
