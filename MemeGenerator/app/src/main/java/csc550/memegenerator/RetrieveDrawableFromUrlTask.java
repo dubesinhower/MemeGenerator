@@ -9,15 +9,15 @@ import java.net.URL;
 /**
  * Created by Christopher on 4/3/2016.
  */
-public class GetDrawableFromUrl extends AsyncTask<String, Void, Drawable> {
+public class RetrieveDrawableFromUrlTask extends AsyncTask<String, Void, Drawable> {
 
     public interface AsyncResponse {
-        void onDrawableLoaded(Drawable output);
+        void processFinish(Drawable output);
     }
 
     public AsyncResponse delegate = null;
 
-    public GetDrawableFromUrl(AsyncResponse delegate) {
+    public RetrieveDrawableFromUrlTask(AsyncResponse delegate) {
         this.delegate = delegate;
     }
 
@@ -29,7 +29,6 @@ public class GetDrawableFromUrl extends AsyncTask<String, Void, Drawable> {
             URL url = new URL(params[0]);
             InputStream is = (InputStream)url.getContent();
             Drawable d = Drawable.createFromStream(is, params[0]);
-            is.close();
             return d;
         }
         catch (Exception e) {
@@ -39,6 +38,6 @@ public class GetDrawableFromUrl extends AsyncTask<String, Void, Drawable> {
     }
 
     protected void onPostExecute(Drawable result) {
-        delegate.onDrawableLoaded(result);
+        delegate.processFinish(result);
     }
 }
