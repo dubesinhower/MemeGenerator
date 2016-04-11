@@ -6,18 +6,21 @@
     tools:context="csc550.memegenerator.MainActivity">
     <item
         android:id="@+id/action_generate"
+        android:icon="@drawable/ic_build_white_24dp"
         android:orderInCategory="100"
         android:title="@string/action_generate"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_favorite"
+        android:icon="@drawable/ic_favorite_white_24dp"
         android:orderInCategory="200"
         android:title="@string/action_favorites"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_home"
+        android:icon="@drawable/ic_home_white_24dp"
         android:orderInCategory="300"
         android:title="@string/action_home"
-        app:showAsAction="never" />
+        app:showAsAction="ifRoom" />
 
 </menu>

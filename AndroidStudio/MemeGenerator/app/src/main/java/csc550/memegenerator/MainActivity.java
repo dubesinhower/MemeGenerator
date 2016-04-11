@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_home) {
-            Intent intent = new Intent(this, MainActivity.class);
             finish();
+            Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
         if (id == R.id.action_generate) {

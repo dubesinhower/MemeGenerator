@@ -52,12 +52,12 @@ public class GeneratorActivity extends AppCompatActivity implements FragmentMana
             finish();
         }
         if (id == R.id.action_generate) {
-            Intent intent = getIntent();
             finish();
+            Intent intent = getIntent();
             startActivity(intent);
         }
         if (id == R.id.action_favorite) {
-            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            finish();
             Intent intent = new Intent(this, FavoritesActivity.class);
             startActivity(intent);
         }

@@ -31,7 +31,7 @@ public class PopularMemesFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        MemeListRequest request = new MemeListRequest("http://version1.api.memegenerator.net/Instances_Select_ByPopular?days=30", new Response.Listener<ArrayList<Meme>>() {
+        MemeListRequest request = new MemeListRequest("http://version1.api.memegenerator.net/Instances_Select_ByPopular?days=30&pageSize=20", new Response.Listener<ArrayList<Meme>>() {
             @Override
             public void onResponse(ArrayList<Meme> response) {
                 try {

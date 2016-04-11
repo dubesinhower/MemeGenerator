@@ -52,13 +52,13 @@ public class FavoritesActivity extends AppCompatActivity implements FragmentMana
             finish();
         }
         if (id == R.id.action_generate) {
-            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            finish();
             Intent intent = new Intent(this, GeneratorActivity.class);
             startActivity(intent);
         }
         if (id == R.id.action_favorite) {
-            Intent intent = getIntent();
             finish();
+            Intent intent = getIntent();
             startActivity(intent);
         }
 
