@@ -8,12 +8,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class GeneratorActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
+public class FavoritesActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_generator);
+        setContentView(R.layout.activity_favorites);
 
         Toolbar appBar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(appBar);
@@ -28,7 +28,7 @@ public class GeneratorActivity extends AppCompatActivity implements FragmentMana
                 return;
             }
 
-            PopularGeneratorsFragment fragment = new PopularGeneratorsFragment();
+            FavoriteMemesFragment fragment = new FavoriteMemesFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
         }
     }
@@ -52,13 +52,13 @@ public class GeneratorActivity extends AppCompatActivity implements FragmentMana
             finish();
         }
         if (id == R.id.action_generate) {
-            Intent intent = getIntent();
-            finish();
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            Intent intent = new Intent(this, GeneratorActivity.class);
             startActivity(intent);
         }
         if (id == R.id.action_favorite) {
-            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            Intent intent = new Intent(this, FavoritesActivity.class);
+            Intent intent = getIntent();
+            finish();
             startActivity(intent);
         }
 

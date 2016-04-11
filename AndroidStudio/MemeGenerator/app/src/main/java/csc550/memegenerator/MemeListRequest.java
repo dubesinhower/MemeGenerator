@@ -38,7 +38,7 @@ public class MemeListRequest extends Request<ArrayList<Meme>>{
                 String display_name = (String)memeHash.get("displayName");
                 String generator_name = (String)memeHash.get("urlName");
                 final String instance_url = (String)memeHash.get("instanceImageUrl");
-                memes.add(new Meme(display_name, generator_name, instance_url));
+                memes.add(new Meme(display_name, generator_name, instance_url, false));
             }
             return Response.success(memes, HttpHeaderParser.parseCacheHeaders(response));
         } catch (UnsupportedEncodingException e) {

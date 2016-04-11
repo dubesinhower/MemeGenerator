@@ -10,8 +10,14 @@
         android:title="@string/action_generate"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_home"
+        android:id="@+id/action_favorite"
         android:orderInCategory="200"
+        android:title="@string/action_favorites"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_home"
+        android:orderInCategory="300"
         android:title="@string/action_home"
         app:showAsAction="never" />
+
 </menu>

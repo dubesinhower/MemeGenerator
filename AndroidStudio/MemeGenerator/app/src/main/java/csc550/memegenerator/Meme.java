@@ -7,11 +7,13 @@ public class Meme {
     public String displayName;
     public String generatorName;
     public String instanceUrl;
+    public boolean isMine;
     public Meme() {
     }
-    public Meme(String displayName, String generatorName, String instanceUrl) {
+    public Meme(String displayName, String generatorName, String instanceUrl, boolean isMine) {
         this.displayName = displayName;
         this.generatorName = generatorName;
         this.instanceUrl = instanceUrl;
+        this.isMine = isMine;
     }
 }

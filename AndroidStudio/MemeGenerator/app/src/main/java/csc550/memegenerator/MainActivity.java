@@ -58,6 +58,11 @@ public class MainActivity extends AppCompatActivity implements FragmentManager.O
             Intent intent = new Intent(this, GeneratorActivity.class);
             startActivity(intent);
         }
+        if (id == R.id.action_favorite) {
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            Intent intent = new Intent(this, FavoritesActivity.class);
+            startActivity(intent);
+        }
 
         return super.onOptionsItemSelected(item);
     }
