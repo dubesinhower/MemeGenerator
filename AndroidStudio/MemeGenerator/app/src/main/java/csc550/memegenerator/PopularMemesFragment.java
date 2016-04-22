@@ -34,11 +34,7 @@ public class PopularMemesFragment extends Fragment {
         MemeListRequest request = new MemeListRequest("http://version1.api.memegenerator.net/Instances_Select_ByPopular?days=30&pageSize=20", new Response.Listener<ArrayList<Meme>>() {
             @Override
             public void onResponse(ArrayList<Meme> response) {
-                try {
-                    displayMemeButtonViews(response);
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
+                displayMemeButtonViews(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -51,27 +47,33 @@ public class PopularMemesFragment extends Fragment {
         MyVolley.getInstance(getContext()).addToRequestQueue(request);
     }
 
-    public void showMeme(View v, String meme_json) {
+    public void showMeme(Meme meme) {
+        String memeJson = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            memeJson = mapper.writeValueAsString(meme);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
         ShowMemeFragment fragment = new ShowMemeFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("Meme", meme_json);
+        bundle.putString("Meme", memeJson);
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
     }
 
-    public void displayMemeButtonViews(ArrayList<Meme> memes) throws JsonProcessingException {
+    public void displayMemeButtonViews(ArrayList<Meme> memes) {
         Context context = getContext();
-
         LinearLayout meme_buttons = (LinearLayout)getView().findViewById(R.id.meme_buttons);
-        for (Meme meme: memes) {
+
+        for (final Meme meme: memes) {
             Button button = new Button(context);
             button.setText(meme.displayName);
-            ObjectMapper mapper = new ObjectMapper();
-            final String jsonString = mapper.writeValueAsString(meme);
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showMeme(v, jsonString);
+                    showMeme(meme);
                 }
             });
             meme_buttons.addView(button);

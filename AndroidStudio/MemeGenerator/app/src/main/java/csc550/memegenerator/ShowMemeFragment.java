@@ -49,14 +49,25 @@ public class ShowMemeFragment extends Fragment{
 
         Bundle bundle = this.getArguments();
         final String memeJson = bundle.getString("Meme");
-        ObjectMapper mapper = new ObjectMapper();
 
+        Meme meme = getMemeFromJson(memeJson);
+
+        setUpImageView(meme);
+        setUpFavoriteButton(meme);
+    }
+
+    private Meme getMemeFromJson(String json) {
+        ObjectMapper mapper = new ObjectMapper();
         Meme meme = null;
         try {
-            meme = mapper.readValue(memeJson, Meme.class);
+            meme = mapper.readValue(json, Meme.class);
         } catch (IOException e) {
             Log.e("JSON_ERROR", "couldn't convert json into object");
         }
+        return meme;
+    }
+
+    private void setUpImageView(Meme meme) {
         final ImageView memeView = (ImageView)getView().findViewById(R.id.meme);
         ImageLoader imageLoader = MyVolley.getInstance(getContext()).getImageLoader();
         imageLoader.get(meme.instanceUrl, new ImageLoader.ImageListener() {
@@ -73,8 +84,6 @@ public class ShowMemeFragment extends Fragment{
                 return;
             }
         });
-
-        setUpFavoriteButton(meme);
     }
 
     private void setUpFavoriteButton(Meme meme) {

@@ -2,21 +2,21 @@ package csc550.memegenerator;
 
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class GeneratorActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
+public class AccountActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_generator);
+        setContentView(R.layout.activity_account);
 
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -27,20 +27,6 @@ public class GeneratorActivity extends AppCompatActivity implements FragmentMana
 
         Toolbar appBar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(appBar);
-
-        // Configure up button
-        getSupportFragmentManager().addOnBackStackChangedListener(this);
-        shouldDisplayHomeUp();
-
-        // http://developer.android.com/training/basics/fragments/fragment-ui.html
-        if (findViewById(R.id.fragment_container) != null) {
-            if (savedInstanceState != null) {
-                return;
-            }
-
-            PopularGeneratorsFragment fragment = new PopularGeneratorsFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
-        }
     }
 
     @Override
@@ -63,7 +49,7 @@ public class GeneratorActivity extends AppCompatActivity implements FragmentMana
         }
         if (id == R.id.action_generate) {
             finish();
-            Intent intent = getIntent();
+            Intent intent = new Intent(this, GeneratorActivity.class);
             startActivity(intent);
         }
         if (id == R.id.action_favorite) {
@@ -73,28 +59,10 @@ public class GeneratorActivity extends AppCompatActivity implements FragmentMana
         }
         if (id == R.id.action_account) {
             finish();
-            Intent intent = new Intent(this, AccountActivity.class);
+            Intent intent = getIntent();
             startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackStackChanged() {
-        shouldDisplayHomeUp();
-    }
-
-    public void shouldDisplayHomeUp() {
-        //Enable Up button only  if there are entries in the back stack
-        boolean canback = getSupportFragmentManager().getBackStackEntryCount()>0;
-        getSupportActionBar().setDisplayHomeAsUpEnabled(canback);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        //This method is called when the up button is pressed. Just the pop back stack.
-        getSupportFragmentManager().popBackStack();
-        return true;
     }
 }

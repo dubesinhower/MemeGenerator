@@ -23,7 +23,6 @@ public class MyVolley {
     private MyVolley(Context context) {
         mCtx = context;
         mRequestQueue = getRequestQueue();
-
         mImageLoader = new ImageLoader(mRequestQueue, new LruBitmapCache(LruBitmapCache.getCacheSize(context)));
     }
 

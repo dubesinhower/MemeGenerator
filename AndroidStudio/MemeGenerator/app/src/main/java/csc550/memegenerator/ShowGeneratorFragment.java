@@ -3,20 +3,27 @@ package csc550.memegenerator;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.w3c.dom.Text;
+
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ShowGeneratorFragment extends Fragment implements GetJsonDataFromUrl.AsyncResponse, GetDrawableFromUrl.AsyncResponse {
-
-    public ShowGeneratorFragment() {
-        // Required empty public constructor
-    }
+public class ShowGeneratorFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,38 +35,68 @@ public class ShowGeneratorFragment extends Fragment implements GetJsonDataFromUr
     @Override
     public void onStart() {
         super.onStart();
-        String generator_name = null;
 
         Bundle bundle = this.getArguments();
-        generator_name=bundle.getString("GeneratorName");
+        final String generatorJson = bundle.getString("Generator");
 
-        new GetJsonDataFromUrl(this).execute("http://version1.api.memegenerator.net/Generator_Select_ByUrlNameOrGeneratorID?urlName=" + generator_name);
+        Generator generator = getGeneratorFromJson(generatorJson);
+
+        setUpTitleTextView(generator);
+        setUpImageView(generator);
+        setUpDescriptionTextView(generator);
     }
 
-    @Override
-    public void onJsonDataLoaded(Map<String, Object> output) {
-        LinkedHashMap generatorDetails = (LinkedHashMap)output.get("result");
-        int id = (int)generatorDetails.get("generatorID");
-        String name = (String)generatorDetails.get("displayName");
-        String imageUrl = (String)generatorDetails.get("imageUrl");
-        String description = (String)generatorDetails.get("description");
+    private void setUpDescriptionTextView(Generator generator) {
+        final TextView descriptionView = (TextView)getActivity().findViewById(R.id.generator_description);
 
-        TextView generator_text = (TextView)getView().findViewById(R.id.generator_name);
-        TextView generator_description = (TextView)getView().findViewById(R.id.generator_description);
-        generator_text.setText(name);
-        if(description != null && !description.trim().isEmpty()) {
-            generator_description.setText(description.trim());
+        GeneratorDescriptionRequest request = new GeneratorDescriptionRequest("http://version1.api.memegenerator.net/Generator_Select_ByUrlNameOrGeneratorID?generatorID="+ generator.generatorId +"&urlName=" + generator.generatorName, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                descriptionView.setText(response);
+            }
+        }, new ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
+        MyVolley.getInstance(getContext()).addToRequestQueue(request);
+    }
+
+    private void setUpImageView(Generator generator) {
+        final ImageView imageView = (ImageView)getActivity().findViewById(R.id.generator_image);
+        ImageLoader imageLoader = MyVolley.getInstance(getContext()).getImageLoader();
+        imageLoader.get(generator.imageUrl, new ImageLoader.ImageListener() {
+            @Override
+            public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
+                imageView.setImageBitmap(response.getBitmap());
+            }
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast toast = Toast.makeText(getContext(), "Sorry, there was a problem displaying the image.", Toast.LENGTH_LONG);
+                toast.show();
+                getActivity().getSupportFragmentManager().popBackStack();
+                return;
+            }
+        });
+    }
+
+    private void setUpTitleTextView(Generator generator) {
+        TextView titleView = (TextView)getActivity().findViewById(R.id.generator_name);
+        titleView.setText(generator.displayName);
+    }
+
+    private Generator getGeneratorFromJson(String json) {
+        ObjectMapper mapper = new ObjectMapper();
+        Generator generator = null;
+        try {
+            generator = mapper.readValue(json, Generator.class);
+        } catch (IOException e) {
+            Log.e("JSON_ERROR", "couldn't convert json into object");
         }
-        else {
-            generator_description.setText("No description.");
-        }
-
-        new GetDrawableFromUrl(this).execute(imageUrl);
+        return generator;
     }
 
-    @Override
-    public void onDrawableLoaded(Drawable output) {
-        ImageView generator_image = (ImageView)getView().findViewById(R.id.generator_image);
-        generator_image.setImageDrawable(output);
-    }
 }

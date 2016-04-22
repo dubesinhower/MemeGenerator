@@ -11,15 +11,21 @@
         android:title="@string/action_generate"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_account"
+        android:icon="@drawable/ic_person_white_24dp"
+        android:orderInCategory="200"
+        android:title="@string/action_account"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_favorite"
         android:icon="@drawable/ic_favorite_white_24dp"
-        android:orderInCategory="200"
+        android:orderInCategory="300"
         android:title="@string/action_favorites"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_home"
         android:icon="@drawable/ic_home_white_24dp"
-        android:orderInCategory="300"
+        android:orderInCategory="400"
         android:title="@string/action_home"
         app:showAsAction="ifRoom" />
 

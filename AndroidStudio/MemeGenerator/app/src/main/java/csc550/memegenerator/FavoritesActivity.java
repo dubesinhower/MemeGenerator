@@ -1,12 +1,15 @@
 package csc550.memegenerator;
 
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class FavoritesActivity extends AppCompatActivity implements FragmentManager.OnBackStackChangedListener {
 
@@ -14,6 +17,13 @@ public class FavoritesActivity extends AppCompatActivity implements FragmentMana
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
+
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
 
         Toolbar appBar = (Toolbar) findViewById(R.id.app_bar);
         setSupportActionBar(appBar);
@@ -59,6 +69,11 @@ public class FavoritesActivity extends AppCompatActivity implements FragmentMana
         if (id == R.id.action_favorite) {
             finish();
             Intent intent = getIntent();
+            startActivity(intent);
+        }
+        if (id == R.id.action_account) {
+            finish();
+            Intent intent = new Intent(this, AccountActivity.class);
             startActivity(intent);
         }
 

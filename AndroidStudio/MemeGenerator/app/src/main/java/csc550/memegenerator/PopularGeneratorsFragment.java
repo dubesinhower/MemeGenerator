@@ -8,49 +8,71 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PopularGeneratorsFragment extends Fragment implements GetJsonDataFromUrl.AsyncResponse {
-
-    public PopularGeneratorsFragment() {
-        // Required empty public constructor
-    }
+public class PopularGeneratorsFragment extends Fragment {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        new GetJsonDataFromUrl(this).execute("http://version1.api.memegenerator.net/Generators_Select_ByPopular");
-
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_popular_generators, container, false);
     }
 
-    private void showGenerator(View v, String generator_name) {
+    @Override
+    public void onStart() {
+        super.onStart();
+        GeneratorListRequest request = new GeneratorListRequest("http://version1.api.memegenerator.net/Generators_Select_ByPopular", new Response.Listener<ArrayList<Generator>>() {
+
+            public void onResponse(ArrayList<Generator> response) {
+                displayGeneratorButtonViews(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast toast = Toast.makeText(getContext(), "Sorry, there was a problem loading the list of generators.", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+
+        MyVolley.getInstance(getContext()).addToRequestQueue(request);
+    }
+
+    private void showGenerator(Generator generator) {
+        String generatorJson = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            generatorJson = mapper.writeValueAsString(generator);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
         ShowGeneratorFragment fragment = new ShowGeneratorFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("GeneratorName", generator_name);
+        bundle.putString("Generator", generatorJson);
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
     }
 
-    @Override
-    public void onJsonDataLoaded(Map<String, Object> output) {
+
+    public void displayGeneratorButtonViews(ArrayList<Generator> generators)  {
         Context context = getContext();
 
-        ArrayList<LinkedHashMap> generators = (ArrayList<LinkedHashMap>)output.get("result");
         LinearLayout meme_buttons = (LinearLayout)getView().findViewById(R.id.generator_buttons);
-        for(LinkedHashMap generator : generators) {
+        for(final Generator generator : generators) {
             Button generator_button = new Button(context);
-            String generator_display_name = (String)generator.get("displayName");
-            final String generator_name = (String)generator.get("urlName");
-            generator_button.setText(generator_display_name);
+            generator_button.setText(generator.displayName);
             generator_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showGenerator(v, generator_name);
+                    showGenerator(generator);
                 }
             });
             meme_buttons.addView(generator_button);
