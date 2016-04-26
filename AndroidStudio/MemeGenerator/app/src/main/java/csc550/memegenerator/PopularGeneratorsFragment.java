@@ -21,6 +21,8 @@ import java.util.Map;
 
 public class PopularGeneratorsFragment extends Fragment {
 
+    private int pageNumber = 1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_popular_generators, container, false);
@@ -29,7 +31,25 @@ public class PopularGeneratorsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        GeneratorListRequest request = new GeneratorListRequest("http://version1.api.memegenerator.net/Generators_Select_ByPopular", new Response.Listener<ArrayList<Generator>>() {
+        showPopularGenerators();
+        Button nextButton = (Button)getActivity().findViewById(R.id.next_button);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewNextPage();
+            }
+        });
+        Button lastButton = (Button)getActivity().findViewById(R.id.last_button);
+        lastButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewLastPage();
+            }
+        });
+    }
+
+    private void showPopularGenerators() {
+        GeneratorListRequest request = new GeneratorListRequest("http://version1.api.memegenerator.net/Generators_Select_ByPopular?pageIndex="+ pageNumber +"&pageSize=20", new Response.Listener<ArrayList<Generator>>() {
 
             public void onResponse(ArrayList<Generator> response) {
                 displayGeneratorButtonViews(response);
@@ -64,8 +84,9 @@ public class PopularGeneratorsFragment extends Fragment {
 
     public void displayGeneratorButtonViews(ArrayList<Generator> generators)  {
         Context context = getContext();
+        LinearLayout memeButtons = (LinearLayout)getView().findViewById(R.id.generator_buttons);
+        memeButtons.removeAllViews();
 
-        LinearLayout meme_buttons = (LinearLayout)getView().findViewById(R.id.generator_buttons);
         for(final Generator generator : generators) {
             Button generator_button = new Button(context);
             generator_button.setText(generator.displayName);
@@ -75,7 +96,28 @@ public class PopularGeneratorsFragment extends Fragment {
                     showGenerator(generator);
                 }
             });
-            meme_buttons.addView(generator_button);
+            memeButtons.addView(generator_button);
         }
+    }
+
+    public void viewNextPage() {
+        pageNumber++;
+        showPopularGenerators();
+        Button lastButton = (Button)getActivity().findViewById(R.id.last_button);
+        if(pageNumber>1)
+            lastButton.setEnabled(true);
+        else
+            lastButton.setEnabled(false);
+    }
+
+    public void viewLastPage() {
+        if(pageNumber - 1 >= 1)
+            pageNumber--;
+        showPopularGenerators();
+        Button lastButton = (Button)getActivity().findViewById(R.id.last_button);
+        if(pageNumber>1)
+            lastButton.setEnabled(true);
+        else
+            lastButton.setEnabled(false);
     }
 }

@@ -1,12 +1,16 @@
 package csc550.memegenerator;
 
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +19,7 @@ import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.w3c.dom.Text;
@@ -24,6 +29,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ShowGeneratorFragment extends Fragment {
+    private SharedPreferences prefs;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,6 +56,39 @@ public class ShowGeneratorFragment extends Fragment {
         setUpTitleTextView(generator);
         setUpImageView(generator);
         setUpDescriptionTextView(generator);
+        setUpMakeMemeButton(generator);
+    }
+
+    private void setUpMakeMemeButton(final Generator generator) {
+        Button makeMemeButton = (Button)getActivity().findViewById(R.id.make_meme_button);
+        makeMemeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(prefs.getString("username", "").isEmpty()) {
+                    Toast toast = Toast.makeText(getContext(), "Please set account information before making a meme.", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                else {
+                    showGeneratorForm(generator);
+                }
+            }
+        });
+    }
+
+    private void showGeneratorForm(Generator generator) {
+        String generatorJson = null;
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            generatorJson = mapper.writeValueAsString(generator);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        ShowGeneratorFormFragment fragment = new ShowGeneratorFormFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("Generator", generatorJson);
+        fragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
     }
 
     private void setUpDescriptionTextView(Generator generator) {

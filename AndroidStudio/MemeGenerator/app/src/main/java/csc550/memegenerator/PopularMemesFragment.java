@@ -22,6 +22,8 @@ import java.util.ArrayList;
  */
 public class PopularMemesFragment extends Fragment {
 
+    private int pageNumber = 1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_popular_memes, container, false);
@@ -31,7 +33,25 @@ public class PopularMemesFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        MemeListRequest request = new MemeListRequest("http://version1.api.memegenerator.net/Instances_Select_ByPopular?days=30&pageSize=20", new Response.Listener<ArrayList<Meme>>() {
+        showPopularMemes();
+        Button nextButton = (Button)getActivity().findViewById(R.id.next_button);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewNextPage();
+            }
+        });
+        Button lastButton = (Button)getActivity().findViewById(R.id.last_button);
+        lastButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewLastPage();
+            }
+        });
+    }
+
+    public void showPopularMemes() {
+        MemeListRequest request = new MemeListRequest("http://version1.api.memegenerator.net/Instances_Select_ByPopular?pageIndex="+ pageNumber +"&pageSize=20&days=30", new Response.Listener<ArrayList<Meme>>() {
             @Override
             public void onResponse(ArrayList<Meme> response) {
                 displayMemeButtonViews(response);
@@ -65,7 +85,8 @@ public class PopularMemesFragment extends Fragment {
 
     public void displayMemeButtonViews(ArrayList<Meme> memes) {
         Context context = getContext();
-        LinearLayout meme_buttons = (LinearLayout)getView().findViewById(R.id.meme_buttons);
+        LinearLayout memeButtons = (LinearLayout)getView().findViewById(R.id.meme_buttons);
+        memeButtons.removeAllViews();
 
         for (final Meme meme: memes) {
             Button button = new Button(context);
@@ -76,7 +97,28 @@ public class PopularMemesFragment extends Fragment {
                     showMeme(meme);
                 }
             });
-            meme_buttons.addView(button);
+            memeButtons.addView(button);
         }
+    }
+
+    public void viewNextPage() {
+        pageNumber++;
+        showPopularMemes();
+        Button lastButton = (Button)getActivity().findViewById(R.id.last_button);
+        if(pageNumber>1)
+            lastButton.setEnabled(true);
+        else
+            lastButton.setEnabled(false);
+    }
+
+    public void viewLastPage() {
+        if(pageNumber - 1 >= 1)
+            pageNumber--;
+        showPopularMemes();
+        Button lastButton = (Button)getActivity().findViewById(R.id.last_button);
+        if(pageNumber>1)
+            lastButton.setEnabled(true);
+        else
+            lastButton.setEnabled(false);
     }
 }
